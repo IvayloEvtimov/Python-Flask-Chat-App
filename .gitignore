@@ -2,5 +2,5 @@ flaskr/__pycache__/__init__.cpython-38.pyc
 flaskr/__pycache__/auth.cpython-38.pyc
 flaskr/__pycache__/chat.cpython-38.pyc
 flaskr/__pycache__/db.cpython-38.pyc
-.vscode/settings.json
+.vscode/*
 instance/*
