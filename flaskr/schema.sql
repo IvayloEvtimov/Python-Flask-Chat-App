@@ -1,0 +1,15 @@
+-- DROP TABLE IF EXISTS users;
+
+-- CREATE TABLE users (
+--   username TEXT PRIMARY KEY NOT NULL,
+--   password TEXT NOT NULL,
+-- );
+
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS post;
+
+CREATE TABLE user (
+--   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT PRIMARY KEY NOT NULL,
+  password TEXT NOT NULL
+);
