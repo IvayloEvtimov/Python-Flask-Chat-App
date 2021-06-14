@@ -24,14 +24,10 @@ def searchContact():
     username = request.form["username"]
 
     users = db.execute(
-        "SELECT * FROM user WHERE username LIKE ?", (username,)
+        "SELECT username FROM user WHERE username LIKE ?", (username,)
     ).fetchall()
 
     if len(users) == 0:
         return json.dumps([])
 
-    res = []
-    for user in users:
-        res.append(user)
-
-    return json.dumps(res)
+    return json.dumps([dict(ix) for ix in users])
