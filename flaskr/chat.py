@@ -4,6 +4,8 @@ from werkzeug.exceptions import abort
 from flaskr.auth import login_required
 from flaskr.db import get_db
 
+import json
+
 bp = Blueprint("chat", __name__)
 
 
@@ -12,3 +14,24 @@ def index():
     db = get_db()
 
     return render_template("chat/index.html")
+
+
+@bp.route("/search", methods=["POST"])
+def searchContact():
+    db = get_db()
+    data = None
+
+    username = request.form["username"]
+
+    users = db.execute(
+        "SELECT * FROM user WHERE username LIKE ?", (username,)
+    ).fetchall()
+
+    if len(users) == 0:
+        return json.dumps([])
+
+    res = []
+    for user in users:
+        res.append(user)
+
+    return json.dumps(res)
