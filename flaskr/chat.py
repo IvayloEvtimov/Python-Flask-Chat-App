@@ -19,7 +19,6 @@ def index():
 @bp.route("/search", methods=["POST"])
 def searchContact():
     db = get_db()
-    data = None
 
     username = request.form["username"]
 
@@ -30,4 +29,4 @@ def searchContact():
     if len(users) == 0:
         return json.dumps([])
 
-    return json.dumps([dict(ix) for ix in users])
+
