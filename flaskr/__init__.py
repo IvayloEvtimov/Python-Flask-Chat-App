@@ -34,5 +34,6 @@ def create_app(test_config=None):
     app.register_blueprint(chat.bp)
     app.add_url_rule("/", endpoint="index")
     app.add_url_rule("/search", endpoint="searchContact")
+    app.add_url_rule("/loadChat", endpoint="loadChat")
 
     return app
