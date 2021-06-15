@@ -15,7 +15,8 @@ CREATE TABLE user (
 );
 
 CREATE TABLE person_chat (
-    recipient1 TEXT PRIMARY KEY NOT NULL,
-    recipient2 TEXT PRIMARY KEY NOT NULL,
-    chat_file TEXT NOT NULL
+    recipient1 TEXT NOT NULL,
+    recipient2 TEXT NOT NULL,
+    chat_file TEXT NOT NULL,
+    PRIMARY KEY(recipient1, recipient2)
 );
