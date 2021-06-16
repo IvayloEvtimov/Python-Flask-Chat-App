@@ -1,5 +1,31 @@
 $(document).ready(function () {
+    function loadContacts() {
+        $.ajax({
+            url: "/loadContacts",
+            method: "POST",
+            success: function (data) {
+                var obj = JSON.parse(data);
+
+                var string = "";
+
+                if (obj.length > 0) {
+                    for (var count = 0; count < obj.length; ++count) {
+                        console.log(obj[count])
+                        string = string.concat("<li class='clearfix'>\n\t<img src = 'https://bootdey.com/img/Content/avatar/avatar2.png' alt = 'avatar'>\n\t<div class='about'>\n\t\t<div class='name'>" + obj[count] + "</div>\n\t</div>\n</li>\n")
+                    }
+                }
+
+                $(".chat-list").html(string);
+            }
+        });
+    }
+
+
+
+
     var selected_contact = "";
+
+    loadContacts();
 
     $("#search-text").keyup(function () {
         // console.log("KEY");
@@ -73,7 +99,5 @@ $(document).ready(function () {
                 }
             });
         }
-
-        // console.log(message)
     });
 });
