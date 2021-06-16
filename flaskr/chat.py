@@ -54,6 +54,14 @@ def loadChat():
     if chat_file_path is None:
         chat_file_path = string.ascii_letters
         chat_file_path = "".join(random.choice(chat_file_path) for i in range(10))
+
+        SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+        json_url = os.path.join(SITE_ROOT, "static/chats", chat_file_path)
+
+        with open(json_url, "w") as file:
+            file.write("[]")
+            file.close()
+
         db.execute(
             "INSERT INTO person_chat (recipient1,recipient2,chat_file) VALUES  (?,?,?)",
             (recipient1, recipient2, chat_file_path),
@@ -93,5 +101,6 @@ def sendMessage():
         data.append(dict)
         file.seek(0)
         json.dump(data, file)
+        file.close()
 
     return json.dumps(dict)
