@@ -65,7 +65,7 @@ def loadChat():
     json_url = os.path.join(SITE_ROOT, "static/chats", chat_file_path[0])
     data = json.load(open(json_url))
 
-    return data
+    return json.dumps(data)
 
 
 @bp.route("/sendMessage", methods=["POST"])
