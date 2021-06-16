@@ -35,5 +35,6 @@ def create_app(test_config=None):
     app.add_url_rule("/", endpoint="index")
     app.add_url_rule("/search", endpoint="searchContact")
     app.add_url_rule("/loadChat", endpoint="loadChat")
+    app.add_url_rule("/sendMessage", endpoint="sendMessage")
 
     return app

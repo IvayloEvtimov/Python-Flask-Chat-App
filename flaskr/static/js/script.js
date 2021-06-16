@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    var selected_contact = "";
+
     $("#search-text").keyup(function () {
         // console.log("KEY");
         $.ajax({
@@ -18,5 +20,42 @@ $(document).ready(function () {
                 $(".chat-list").html(string);
             }
         });
+    });
+
+    $(".chat-list").on("click", function () {
+        // console.log($(this).find(".name").text());
+        selected_contact = $(this).find(".name").text();
+        $.ajax({
+            url: "/loadChat",
+            method: "POST",
+            data: { recipient: $(this).find(".name").text() },
+            success: function (data) {
+                // console.log(data);
+
+                if (jQuery.isEmptyObject(data)) {
+                    $(".chat-history").html("");
+                } else {
+                    var obj = JSON.parse(data);
+                    var string = "";
+                    $(".chat-history").html("test");
+                }
+            }
+        });
+    });
+
+    $("#send-button").on("click", function () {
+        var message = $.trim($("#message").val());
+        if (message != "") {
+            $.ajax({
+                url: "/sendMessage",
+                method: "POST",
+                data: { recipient: selected_contact, message: message },
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+
+        // console.log(message)
     });
 });
