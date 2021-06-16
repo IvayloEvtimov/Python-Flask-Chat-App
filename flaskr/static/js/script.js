@@ -69,6 +69,9 @@ $(document).ready(function () {
                             string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + obj[elem]["message"] + "</div>\n</li>\n")
                         }
                     }
+
+                    var user_info = "<img src='https://bootdey.com/img/Content/avatar/avatar2.png' alt='avatar'>\n<div class='chat-about' >\n\t<h6 class='m-b-0'>" + selected_contact + "</h6>\t</div>";
+                    $("#talking_user").html(user_info);
                     $("#chat-list").html(string);
                 }
             }
