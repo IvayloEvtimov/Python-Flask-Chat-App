@@ -57,6 +57,17 @@ $(document).ready(function () {
                 method: "POST",
                 data: { recipient: selected_contact, message: message },
                 success: function (data) {
+                    var obj = JSON.parse(data);
+                    var string = "";
+
+                    if (selected_contact == obj["sender"]) {
+                        string = string.concat("<li class='clearfix'>\n\t<div class='message-data'>\n\t\t<span class='message-data-time'>" + obj["time"] + "</span>\n\t</div>\n\t<div class='message my-message'>" + obj["message"] + "</div>\n</li>\n")
+                    } else {
+                        string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + obj["time"] + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + obj["message"] + "</div>\n</li>\n")
+                    }
+
+                    $("#chat-list").append(string);
+                    $("#message").val("");
                 }
             });
         }
