@@ -86,7 +86,7 @@ def sendMessage():
     SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
     json_url = os.path.join(SITE_ROOT, "static/chats", chat_file_path[0])
 
-    dict = {"sender": sender, "message": message}
+    dict = {"sender": sender, "time": seconds, "message": message}
 
     with open(json_url, "r+") as file:
         data = json.load(file)

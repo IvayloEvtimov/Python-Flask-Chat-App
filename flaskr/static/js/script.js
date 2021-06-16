@@ -36,10 +36,11 @@ $(document).ready(function () {
                     var string = "";
 
                     for (var elem in obj) {
+                        var date = new Date(obj[elem]["time"] * 1000)
                         if (selected_contact == obj[elem]["sender"]) {
-                            string = string.concat("<li class='clearfix'>\n\t<div class='message-data'>\n\t\t<span class='message-data-time'>" + "1234" + "</span>\n\t</div>\n\t<div class='message my-message'>" + obj[elem]["message"] + "</div>\n</li>\n")
+                            string = string.concat("<li class='clearfix'>\n\t<div class='message-data'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message my-message'>" + obj[elem]["message"] + "</div>\n</li>\n")
                         } else {
-                            string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + "1234" + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + obj[elem]["message"] + "</div>\n</li>\n")
+                            string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + obj[elem]["message"] + "</div>\n</li>\n")
                         }
                     }
                     $("#chat-list").html(string);
