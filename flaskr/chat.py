@@ -23,6 +23,28 @@ def index():
     return render_template("chat/index.html")
 
 
+@bp.route("/loadContacts", methods=["POST"])
+def loadContacts():
+    db = get_db()
+
+    username = session["username"]
+
+    contacts = db.execute(
+        "SELECT recipient1,recipient2 FROM person_chat WHERE recipient1 = ? OR recipient2 = ?",
+        (username, username),
+    ).fetchall()
+
+    if len(contacts) == 0:
+        return json.dumps([])
+
+    output = []
+
+    for user in contacts:
+        output.append(user[0])
+
+    return json.dumps(output)
+
+
 @bp.route("/search", methods=["POST"])
 def searchContact():
     db = get_db()
