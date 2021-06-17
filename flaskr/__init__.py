@@ -12,6 +12,7 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY="dev",
         DATABASE=os.path.join(app.instance_path, "flaskr.sqlite"),
+        # UPLOAD_FOLDER=UPLOAD_FOLDER,
     )
 
     if test_config is None:
@@ -37,5 +38,7 @@ def create_app(test_config=None):
     app.add_url_rule("/search", endpoint="searchContact")
     app.add_url_rule("/loadChat", endpoint="loadChat")
     app.add_url_rule("/sendMessage", endpoint="sendMessage")
+    app.add_url_rule("/sendImage", endpoint="sendImage")
+    app.add_url_rule("/uploads/<name>", endpoint="loadImage", build_only=True)
 
     return app
