@@ -116,4 +116,42 @@ $(document).ready(function () {
             });
         }
     });
+
+
+    $("#img-button").on("click", function () {
+        $("#img-file").trigger("click");
+    });
+
+    $("#img-file").on("change", function () {
+        var file_data = $('#img-file').prop('files')[0];
+        var form_data = new FormData();
+
+        form_data.append('file', file_data);
+        form_data.append('recipient', selected_contact);
+
+        $.ajax({
+            url: "/sendImage",
+            dataType: 'text',
+            cache: false,
+            contentType: false,
+            processData: false,
+            method: "POST",
+            data: form_data,
+            success: function (data) {
+                console.log(data);
+                var obj = JSON.parse(data);
+                var string = "";
+
+                var date = new Date(obj["time"] * 1000);
+                var img_link = "<img src='" + window.location.href + obj["url"] + "' alt='image' style='height:240px; width:240px'>"
+
+                if (selected_contact == obj["sender"]) {
+                    string = string.concat("<li class='clearfix'>\n\t<div class='message-data'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message my-message'>" + img_link + "</div>\n</li>\n")
+                } else {
+                    string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + img_link + "</div>\n</li>\n")
+                }
+            }
+        });
+    })
+
 });
