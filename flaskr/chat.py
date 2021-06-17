@@ -13,6 +13,9 @@ import string
 import json
 import os
 
+SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+
+
 bp = Blueprint("chat", __name__)
 
 
@@ -77,7 +80,7 @@ def loadChat():
         chat_file_path = string.ascii_letters
         chat_file_path = "".join(random.choice(chat_file_path) for i in range(10))
 
-        SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+        # SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
         json_url = os.path.join(SITE_ROOT, "static/chats", chat_file_path)
 
         with open(json_url, "w") as file:
@@ -91,9 +94,9 @@ def loadChat():
         db.commit()
         return json.dumps([])
 
-    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-    json_url = os.path.join(SITE_ROOT, "static/chats", chat_file_path[0])
-    data = json.load(open(json_url))
+    # SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    # json_url = os.path.join(SITE_ROOT, "static/chats", chat_file_path[0])
+    data = json.load(open(os.path.join(SITE_ROOT, "static/chats", chat_file_path[0])))
 
     return json.dumps(data)
 
@@ -113,7 +116,7 @@ def sendMessage():
         (receiver, sender, receiver, sender),
     ).fetchone()
 
-    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    # SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
     json_url = os.path.join(SITE_ROOT, "static/chats", chat_file_path[0])
 
     dict = {"sender": sender, "time": seconds, "message": message}
