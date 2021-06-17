@@ -34,10 +34,16 @@
                     <div class="chat-message clearfix">
                         <div class="input-group mb-0">
                             <div class="input-group-prepend">
+
                                 <a href="javascript:void(0);" class="btn btn-outline-primary" id="send-button"><i
-                                        class="fa fa-send"></i></span>
-                                    <a href="javascript:void(0);" class="btn btn-outline-primary"><i
+                                        class="fa fa-send"></i></a>
+
+                                <form enctype="multipart/form-data" method="post" name="fileinfo" class="img-form">
+                                    <input type="file" name="img-file" id="img-file" style="display:none;">
+                                    <a href="javascript:void(0);" class="btn btn-outline-primary" id="img-button"><i
                                             class="fa fa-image"></i></a>
+                                </form>
+
                             </div>
                             <input type="text" class="form-control" id="message" placeholder="Enter text here...">
                         </div>
