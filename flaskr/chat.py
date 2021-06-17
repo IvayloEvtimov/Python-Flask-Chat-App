@@ -6,12 +6,18 @@ from werkzeug.utils import secure_filename
 
 from flaskr.auth import login_required
 from flaskr.db import get_db
+
+from . import __init__
+
 import time
 
 import random
 import string
 import json
 import os
+
+UPLOAD_FOLDER = "static/chats/img/"
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 
 SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 
@@ -122,6 +128,61 @@ def sendMessage():
     dict = {"sender": sender, "time": seconds, "message": message}
 
     with open(json_url, "r+") as file:
+        data = json.load(file)
+        data.append(dict)
+        file.seek(0)
+        json.dump(data, file)
+        file.close()
+
+    return json.dumps(dict)
+
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@bp.route("/uploads/<name>")
+def loadImage(name):
+    return send_from_directory(UPLOAD_FOLDER, name)
+
+
+@bp.route("/sendImage", methods=["POST"])
+def sendImage():
+    db = get_db()
+
+    receiver = request.form["recipient"]
+    sender = session["username"]
+
+    if "file" not in request.files:
+        flash("No file part")
+        return redirect(request.url)
+
+    file = request.files["file"]
+
+    if file.filename == "":
+        flash("No selected file")
+        return redirect(request.url)
+
+    if not file and not allowed_file(file.filename):
+        flash("No selected file")
+        return redirect(request.url)
+
+    filename = secure_filename(file.filename)
+    file.save(os.path.join(SITE_ROOT, UPLOAD_FOLDER, filename))
+
+    chat_file_path = db.execute(
+        "SELECT chat_file FROM person_chat WHERE (recipient1 = ? AND recipient2 = ?) OR (recipient2 = ? AND recipient1 = ?)",
+        (receiver, sender, receiver, sender),
+    ).fetchone()
+
+    dict = {
+        "sender": sender,
+        "time": int(time.time()),
+        "type": "img",
+        "url": url_for("loadImage", name=filename),
+    }
+
+    with open(os.path.join(SITE_ROOT, "static/chats", chat_file_path[0]), "r+") as file:
         data = json.load(file)
         data.append(dict)
         file.seek(0)
