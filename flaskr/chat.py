@@ -1,13 +1,14 @@
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for
 from flask.globals import session
 from flask.helpers import send_from_directory
+from flask.sessions import NullSession
 from werkzeug.exceptions import abort
 from werkzeug.utils import secure_filename
 
 from flaskr.auth import login_required
 from flaskr.db import get_db
 
-from . import __init__
+from . import auth
 
 import time
 
@@ -17,7 +18,7 @@ import json
 import os
 
 UPLOAD_FOLDER = "static/chats/img/"
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
+ALLOWED_IMG_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 
 SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 
@@ -137,8 +138,10 @@ def sendMessage():
     return json.dumps(dict)
 
 
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+def allowed_img_file(filename):
+    return (
+        "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_IMG_EXTENSIONS
+    )
 
 
 @bp.route("/uploads/<name>")
@@ -163,7 +166,7 @@ def sendImage():
         flash("No selected file")
         return redirect(request.url)
 
-    if not file and not allowed_file(file.filename):
+    if not file and not allowed_img_file(file.filename):
         flash("No selected file")
         return redirect(request.url)
 
