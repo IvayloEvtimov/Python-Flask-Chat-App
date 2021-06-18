@@ -84,7 +84,10 @@ def loadContacts():
     output = []
 
     for user in contacts:
-        output.append(user[0])
+        if user[0] != username:
+            output.append(user[0])
+        else:
+            output.append(user[1])
 
     return json.dumps(output)
 
