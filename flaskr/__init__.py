@@ -40,5 +40,7 @@ def create_app(test_config=None):
     app.add_url_rule("/sendMessage", endpoint="sendMessage")
     app.add_url_rule("/sendImage", endpoint="sendImage")
     app.add_url_rule("/uploads/<name>", endpoint="loadImage", build_only=True)
+    app.add_url_rule("/sendVideo", endpoint="sendVideo")
+    app.add_url_rule("/loadVid/<name>", endpoint="loadVid", build_only=True)
 
     return app

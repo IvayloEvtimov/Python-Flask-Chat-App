@@ -17,8 +17,10 @@ import string
 import json
 import os
 
-UPLOAD_FOLDER = "static/chats/img/"
+UPLOAD_IMG_FOLDER = "static/chats/img/"
+UPLOAD_VID_FOLDER = "static/chats/vid/"
 ALLOWED_IMG_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
+ALLOWED_VID_EXTENSIONS = {"mp4", "webm", "oog"}
 
 SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 
@@ -28,7 +30,7 @@ bp = Blueprint("chat", __name__)
 
 @bp.route("/")
 def index():
-    db = get_db()
+    # db = get_db()
 
     if session.get("username") == None:
         return redirect("/auth/login")
@@ -149,7 +151,7 @@ def allowed_img_file(filename):
 
 @bp.route("/uploads/<name>")
 def loadImage(name):
-    return send_from_directory(UPLOAD_FOLDER, name)
+    return send_from_directory(UPLOAD_IMG_FOLDER, name)
 
 
 @bp.route("/sendImage", methods=["POST"])
@@ -174,7 +176,7 @@ def sendImage():
         return redirect(request.url)
 
     filename = secure_filename(file.filename)
-    file.save(os.path.join(SITE_ROOT, UPLOAD_FOLDER, filename))
+    file.save(os.path.join(SITE_ROOT, UPLOAD_IMG_FOLDER, filename))
 
     chat_file_path = db.execute(
         "SELECT chat_file FROM person_chat WHERE (recipient1 = ? AND recipient2 = ?) OR (recipient2 = ? AND recipient1 = ?)",
@@ -186,6 +188,63 @@ def sendImage():
         "time": int(time.time()),
         "type": "img",
         "url": url_for("loadImage", name=filename),
+    }
+
+    with open(os.path.join(SITE_ROOT, "static/chats", chat_file_path[0]), "r+") as file:
+        data = json.load(file)
+        data.append(dict)
+        file.seek(0)
+        json.dump(data, file)
+        file.close()
+
+    return json.dumps(dict)
+
+
+def allowed_vid_file(filename):
+    return (
+        "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_VID_EXTENSIONS
+    )
+
+
+@bp.route("/loadVid/<name>")
+def loadVid(name):
+    return send_from_directory(UPLOAD_VID_FOLDER, name)
+
+
+@bp.route("/sendVideo", methods=["POST"])
+def sendVideo():
+    db = get_db()
+
+    receiver = request.form["recipient"]
+    sender = session["username"]
+
+    if "file" not in request.files:
+        flash("No file part")
+        return redirect(request.url)
+
+    file = request.files["file"]
+
+    if file.filename == "":
+        flash("No selected file")
+        return redirect(request.url)
+
+    if not file and not allowed_vid_file(file.filename):
+        flash("No selected file")
+        return redirect(request.url)
+
+    filename = secure_filename(file.filename)
+    file.save(os.path.join(SITE_ROOT, UPLOAD_VID_FOLDER, filename))
+
+    chat_file_path = db.execute(
+        "SELECT chat_file FROM person_chat WHERE (recipient1 = ? AND recipient2 = ?) OR (recipient2 = ? AND recipient1 = ?)",
+        (receiver, sender, receiver, sender),
+    ).fetchone()
+
+    dict = {
+        "sender": sender,
+        "time": int(time.time()),
+        "type": "vid",
+        "url": url_for("loadVid", name=filename),
     }
 
     with open(os.path.join(SITE_ROOT, "static/chats", chat_file_path[0]), "r+") as file:
