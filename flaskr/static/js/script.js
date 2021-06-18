@@ -20,7 +20,40 @@ $(document).ready(function () {
         });
     }
 
+    function loadChat(obj) {
+        var string = "";
 
+        for (var elem in obj) {
+            var date = new Date(obj[elem]["time"] * 1000)
+
+
+            if (obj[elem]["type"] == "img") {
+                var img_link = "<img src='" + window.location.href + obj[elem]["url"] + "' alt='image' style='height:240px; width:240px'>"
+
+                if (selected_contact == obj[elem]["sender"]) {
+                    string = string.concat("<li class='clearfix'>\n\t<div class='message-data'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message my-message'>" + img_link + "</div>\n</li>\n")
+                } else {
+                    string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + img_link + "</div>\n</li>\n")
+                }
+            } if (obj[elem]["type"] == "vid") {
+                var vid_link = "<video width='320' height='240' controls>\n\t<source src='" + obj["url"] + "'></video>"
+
+                if (selected_contact == obj[elem]["sender"]) {
+                    string = string.concat("<li class='clearfix'>\n\t<div class='message-data'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message my-message'>" + vid_link + "</div>\n</li>\n")
+                } else {
+                    string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + vid_link + "</div>\n</li>\n")
+                }
+            } else {
+                if (selected_contact == obj[elem]["sender"]) {
+                    string = string.concat("<li class='clearfix'>\n\t<div class='message-data'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message my-message'>" + obj[elem]["message"] + "</div>\n</li>\n")
+                } else {
+                    string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + obj[elem]["message"] + "</div>\n</li>\n")
+                }
+            }
+        }
+
+        return string;
+    }
 
 
     var selected_contact = "";
@@ -28,7 +61,6 @@ $(document).ready(function () {
     loadContacts();
 
     $("#search-text").keyup(function () {
-        // console.log("KEY");
         $.ajax({
             url: "/search",
             method: "POST",
@@ -59,37 +91,8 @@ $(document).ready(function () {
                     $(".chat-history").html("");
                 } else {
                     var obj = JSON.parse(data);
-                    var string = "";
 
-                    for (var elem in obj) {
-                        var date = new Date(obj[elem]["time"] * 1000)
-
-
-                        if (obj[elem]["type"] == "img") {
-                            var img_link = "<img src='" + window.location.href + obj[elem]["url"] + "' alt='image' style='height:240px; width:240px'>"
-
-                            if (selected_contact == obj[elem]["sender"]) {
-                                string = string.concat("<li class='clearfix'>\n\t<div class='message-data'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message my-message'>" + img_link + "</div>\n</li>\n")
-                            } else {
-                                string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + img_link + "</div>\n</li>\n")
-                            }
-                        } if (obj[elem]["type"] == "vid") {
-                            var vid_link = "<video width='320' height='240' controls>\n\t<source src='" + obj["url"] + "'></video>"
-
-                            if (selected_contact == obj[elem]["sender"]) {
-                                string = string.concat("<li class='clearfix'>\n\t<div class='message-data'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message my-message'>" + vid_link + "</div>\n</li>\n")
-                            } else {
-                                string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + vid_link + "</div>\n</li>\n")
-                            }
-                        } else {
-                            if (selected_contact == obj[elem]["sender"]) {
-                                string = string.concat("<li class='clearfix'>\n\t<div class='message-data'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message my-message'>" + obj[elem]["message"] + "</div>\n</li>\n")
-                            } else {
-                                string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + obj[elem]["message"] + "</div>\n</li>\n")
-                            }
-                        }
-
-                    }
+                    var string = loadChat(obj);
 
                     var user_info = "<img src='https://bootdey.com/img/Content/avatar/avatar2.png' alt='avatar'>\n<div class='chat-about' >\n\t<h6 class='m-b-0'>" + selected_contact + "</h6>\t</div>";
                     $("#talking_user").html(user_info);
@@ -146,7 +149,6 @@ $(document).ready(function () {
             method: "POST",
             data: form_data,
             success: function (data) {
-                // console.log(data);
                 var obj = JSON.parse(data);
                 var string = "";
 
@@ -184,7 +186,6 @@ $(document).ready(function () {
             method: "POST",
             data: form_data,
             success: function (data) {
-                // console.log(data);
                 var obj = JSON.parse(data);
                 var string = "";
 
