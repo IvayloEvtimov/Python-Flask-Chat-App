@@ -38,6 +38,35 @@ def index():
     return render_template("chat/index.html")
 
 
+@bp.route("/syncChat", methods=["POST"])
+def syncChat():
+    db = get_db()
+
+    recipient1 = request.form["recipient"]
+    recipient2 = session["username"]
+
+    loaded_messages = int(request.form["loaded_messages"])
+
+    chat_file_path = db.execute(
+        "SELECT chat_file FROM person_chat WHERE (recipient1 = ? AND recipient2 = ?) OR (recipient2 = ? AND recipient1 = ?)",
+        (recipient1, recipient2, recipient1, recipient2),
+    ).fetchone()
+
+    data = json.load(open(os.path.join(SITE_ROOT, "static/chats", chat_file_path[0])))
+
+    # return json.dumps(data)
+    output = []
+
+    if len(data) > loaded_messages:
+        for count in range(loaded_messages, len(data)):
+            # output.update(data[count])
+            output.append(data[count])
+
+        return json.dumps(output)
+
+    return json.dumps([])
+
+
 @bp.route("/loadContacts", methods=["POST"])
 def loadContacts():
     db = get_db()
