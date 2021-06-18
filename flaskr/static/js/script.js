@@ -57,8 +57,29 @@ $(document).ready(function () {
 
 
     var selected_contact = "";
+    var loaded_messages = 0;
 
     loadContacts();
+
+    setInterval(function () {
+        if (selected_contact != "") {
+            $.ajax({
+                url: "/syncChat",
+                method: "POST",
+                data: { recipient: selected_contact, loaded_messages: loaded_messages },
+                success: function (data) {
+                    var obj = JSON.parse(data);
+
+                    if (obj.length > 0) {
+                        loaded_messages += obj.length
+                        string = loadChat(obj);
+                        $("#chat-list").append(string);
+                    }
+
+                }
+            });
+        }
+    }, 1000);
 
     $("#search-text").keyup(function () {
         $.ajax({
@@ -91,6 +112,7 @@ $(document).ready(function () {
                     $(".chat-history").html("");
                 } else {
                     var obj = JSON.parse(data);
+                    loaded_messages = obj.length
 
                     var string = loadChat(obj);
 
@@ -121,6 +143,7 @@ $(document).ready(function () {
                         string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + obj["message"] + "</div>\n</li>\n")
                     }
 
+                    loaded_messages += 1;
                     $("#chat-list").append(string);
                     $("#message").val("");
                 }
@@ -161,6 +184,7 @@ $(document).ready(function () {
                     string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + img_link + "</div>\n</li>\n")
                 }
 
+                loaded_messages += 1;
                 $("#chat-list").append(string);
             }
         });
@@ -198,6 +222,7 @@ $(document).ready(function () {
                     string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + vid_link + "</div>\n</li>\n")
                 }
 
+                loaded_messages += 1;
                 $("#chat-list").append(string);
             }
         });
