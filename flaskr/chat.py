@@ -30,6 +30,9 @@ bp = Blueprint("chat", __name__)
 def index():
     db = get_db()
 
+    if session.get("username") == None:
+        return redirect("/auth/login")
+
     return render_template("chat/index.html")
 
 
