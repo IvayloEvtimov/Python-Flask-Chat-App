@@ -8,14 +8,14 @@ $(document).ready(function () {
 
                 var string = "";
 
-                if (obj.length > 0) {
+                if (obj.length > 0 && (loaded_contacts == 0 || loaded_contacts < obj.length)) {
                     for (var count = 0; count < obj.length; ++count) {
                         // console.log(obj[count])
                         string = string.concat("<li class='clearfix'>\n\t<img src = 'https://bootdey.com/img/Content/avatar/avatar2.png' alt = 'avatar'>\n\t<div class='about'>\n\t\t<div class='name'>" + obj[count] + "</div>\n\t</div>\n</li>\n")
                     }
+                    loaded_contacts = obj.length
+                    $(".chat-list").html(string);
                 }
-
-                $(".chat-list").html(string);
             }
         });
     }
@@ -58,6 +58,7 @@ $(document).ready(function () {
 
     var selected_contact = "";
     var loaded_messages = 0;
+    var loaded_contacts = 0;
 
     loadContacts();
 
@@ -79,6 +80,10 @@ $(document).ready(function () {
                 }
             });
         }
+    }, 1000);
+
+    setInterval(function () {
+        loadContacts();
     }, 1000);
 
     $("#search-text").keyup(function () {
