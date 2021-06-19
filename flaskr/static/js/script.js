@@ -28,14 +28,14 @@ $(document).ready(function () {
 
 
             if (obj[elem]["type"] == "img") {
-                var img_link = "<img src='" + window.location.href + obj[elem]["url"] + "' alt='image' style='height:240px; width:240px'>"
+                var img_link = "<img src='" + window.location.href.slice(0, -1) + obj[elem]["url"] + "' alt='image' style='height:240px; width:240px'>"
 
                 if (selected_contact == obj[elem]["sender"]) {
                     string = string.concat("<li class='clearfix'>\n\t<div class='message-data'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message my-message'>" + img_link + "</div>\n</li>\n")
                 } else {
                     string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + img_link + "</div>\n</li>\n")
                 }
-            } if (obj[elem]["type"] == "vid") {
+            } else if (obj[elem]["type"] == "vid") {
                 var vid_link = "<video width='320' height='240' controls>\n\t<source src='" + obj["url"] + "'></video>"
 
                 if (selected_contact == obj[elem]["sender"]) {
@@ -181,7 +181,8 @@ $(document).ready(function () {
                 var string = "";
 
                 var date = new Date(obj["time"] * 1000);
-                var img_link = "<img src='" + window.location.href + obj["url"] + "' alt='image' style='height:240px; width:240px'>"
+                var base_url = window.location.href.slice(0, -1);
+                var img_link = "<img src='" + base_url + obj["url"] + "' alt='image' style='height:240px; width:240px'>"
 
                 if (selected_contact == obj["sender"]) {
                     string = string.concat("<li class='clearfix'>\n\t<div class='message-data'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message my-message'>" + img_link + "</div>\n</li>\n")
