@@ -36,7 +36,7 @@ $(document).ready(function () {
                     string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + img_link + "</div>\n</li>\n")
                 }
             } else if (obj[elem]["type"] == "vid") {
-                var vid_link = "<video width='320' height='240' controls>\n\t<source src='" + obj["url"] + "'></video>"
+                var vid_link = "<video width='320' height='240' controls>\n\t<source src='" + obj[elem]["url"] + "'></video>"
 
                 if (selected_contact == obj[elem]["sender"]) {
                     string = string.concat("<li class='clearfix'>\n\t<div class='message-data'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message my-message'>" + vid_link + "</div>\n</li>\n")
