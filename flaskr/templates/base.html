@@ -1,5 +1,5 @@
 <!doctype html>
-<title>{% block title %}{% endblock %} - Flaskr</title>
+<title>{% block title %}{% endblock %} - Chat app</title>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -31,7 +31,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Flaskr</a>
+        <a class="navbar-brand" href="#">Chat app</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -39,9 +39,22 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul class="navbar-nav ">
                 {% if g.user %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('auth.logout') }}">Log Out</a>
+                <li class="nav-item dropdown" style="padding-right: 50px;">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ g.user.username }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Log Out</a>
+                        <a class="dropdown-item" href="{{ url_for('auth.changePassword') }}">Change Password</a>
+                        <a class="dropdown-item" href="{{ url_for('auth.changeAvatar') }}">Change Avatar</a>
+
+
+                    </div>
                 </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.logout') }}">Log Out</a>
+                </li> -->
                 {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
