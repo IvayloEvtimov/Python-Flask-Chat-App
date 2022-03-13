@@ -100,11 +100,6 @@ def logout():
     return redirect(url_for("index"))
 
 
-def login_required(view):
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
-        if g.user is None:
-            return redirect(url_for("auth.login"))
 @bp.route("/changePassword", methods=("GET", "POST"))
 def changePassword():
     if request.method == "POST":
@@ -123,6 +118,32 @@ def changePassword():
 
     return render_template("auth/changePassword.html")
 
-        return view(**kwargs)
 
-    return wrapped_view
+@bp.route("/changeAvatar", methods=("GET", "POST"))
+def changeAvatar():
+    if request.method == "POST":
+        db = get_db()
+
+        username = g.user["username"]
+
+        if "file" not in request.files:
+            flash("No file part")
+            return redirect(request.url)
+
+        file = request.files["file"]
+
+        if file.filename == "":
+            flash("No selected file")
+            return redirect(request.url)
+
+        db.execute(
+            "UPDATE user SET avatar = ? WHERE username = ?", (file.filename, username)
+        )
+        db.commit()
+
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(SITE_ROOT, UPLOAD_AVATAR_FOLDER, filename))
+
+        return redirect(url_for("index"))
+
+    return render_template("auth/changeAvatar.html")
