@@ -11,7 +11,7 @@ $(document).ready(function () {
                 if (obj.length > 0 && (loaded_contacts == 0 || loaded_contacts < obj.length)) {
                     for (var count = 0; count < obj.length; ++count) {
                         // console.log(obj[count])
-                        string = string.concat("<li class='clearfix'>\n\t<img src = 'https://bootdey.com/img/Content/avatar/avatar2.png' alt = 'avatar'>\n\t<div class='about'>\n\t\t<div class='name'>" + obj[count] + "</div>\n\t</div>\n</li>\n")
+                        string = string.concat("<li class='clearfix'>\n\t<img src = " + window.location.href.slice(0, -1) + obj[count]["avatar"] + " alt = 'avatar' id='" + obj[count]["username"] + "-avatar'>\n\t<div class='about'>\n\t\t<div class='name'>" + obj[count]["username"] + "</div>\n\t</div>\n</li>\n")
                     }
                     loaded_contacts = obj.length
                     $(".chat-list").html(string);
@@ -97,7 +97,7 @@ $(document).ready(function () {
 
                 if (obj.length > 0) {
                     for (var count = 0; count < obj.length; ++count) {
-                        string = string.concat("<li class='clearfix'>\n\t<img src = 'https://bootdey.com/img/Content/avatar/avatar2.png' alt = 'avatar'>\n\t<div class='about'>\n\t\t<div class='name'>" + obj[0].username + "</div>\n\t</div>\n</li>\n")
+                        string = string.concat("<li class='clearfix'>\n\t<img src = '" + window.location.href.slice(0, -1) + obj[count]["avatar"] + "' alt = 'avatar' id='" + obj[count]["username"] + "-avatar'>\n\t<div class='about'>\n\t\t<div class='name'>" + obj[0].username + "</div>\n\t</div>\n</li>\n")
                     }
                 }
 
@@ -108,6 +108,7 @@ $(document).ready(function () {
 
     $(".chat-list").on("click", function () {
         selected_contact = $(this).find(".name").text();
+        selected_avatar = $(this).find("#" + selected_contact + "-avatar").attr("src");
         $.ajax({
             url: "/loadChat",
             method: "POST",
@@ -121,7 +122,7 @@ $(document).ready(function () {
 
                     var string = loadChat(obj);
 
-                    var user_info = "<img src='https://bootdey.com/img/Content/avatar/avatar2.png' alt='avatar'>\n<div class='chat-about' >\n\t<h6 class='m-b-0'>" + selected_contact + "</h6>\t</div>";
+                    var user_info = "<img src='" + selected_avatar + "' alt='avatar'>\n<div class='chat-about' >\n\t<h6 class='m-b-0'>" + selected_contact + "</h6>\t</div>";
                     $("#talking_user").html(user_info);
                     $("#chat-list").html(string);
                 }
