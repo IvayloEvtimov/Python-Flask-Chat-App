@@ -1,5 +1,4 @@
 import functools
-
 import os
 from flask import (
     Blueprint,
@@ -45,8 +44,8 @@ def register():
 
         if error is None:
             db.execute(
-                "INSERT INTO user (username, password) VALUES (?, ?)",
-                (username, generate_password_hash(password)),
+                "INSERT INTO user (username, avatar, password) VALUES (?, ?, ?)",
+                (username, "default.png", generate_password_hash(password)),
             )
             db.commit()
             return redirect(url_for("auth.login"))
