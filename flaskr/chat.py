@@ -123,15 +123,26 @@ def searchContact():
     db = get_db()
 
     username = request.form["username"]
+    pattern = username + "%"
 
     users = db.execute(
-        "SELECT username FROM user WHERE username LIKE ?", (username,)
+        "SELECT username, avatar FROM user WHERE username LIKE ?", (pattern,)
     ).fetchall()
 
     if len(users) == 0:
         return json.dumps([])
 
-    return json.dumps([dict(user) for user in users])
+    res = []
+
+    for user in users:
+        if user["username"] != session["username"]:
+            dic = {
+                "username": user["username"],
+                "avatar": url_for("loadAvatar", name=user["avatar"]),
+            }
+            res.append(dic)
+
+    return json.dumps(res)
 
 
 @bp.route("/loadChat", methods=["POST"])
