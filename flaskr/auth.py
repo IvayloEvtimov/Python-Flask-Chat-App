@@ -1,5 +1,6 @@
 import functools
 
+import os
 from flask import (
     Blueprint,
     flash,
@@ -10,9 +11,14 @@ from flask import (
     session,
     url_for,
 )
+from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.db import get_db
+
+SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+UPLOAD_AVATAR_FOLDER = "static/chats/avatar/"
+
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
