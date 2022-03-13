@@ -105,6 +105,23 @@ def login_required(view):
     def wrapped_view(**kwargs):
         if g.user is None:
             return redirect(url_for("auth.login"))
+@bp.route("/changePassword", methods=("GET", "POST"))
+def changePassword():
+    if request.method == "POST":
+        db = get_db()
+
+        username = g.user["username"]
+        new_password = request.form["password"]
+
+        db.execute(
+            "UPDATE user SET password = ? WHERE username = ?",
+            (generate_password_hash(new_password), username),
+        )
+        db.commit()
+
+        return redirect(url_for("index"))
+
+    return render_template("auth/changePassword.html")
 
         return view(**kwargs)
 
