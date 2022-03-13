@@ -68,6 +68,11 @@ def syncChat():
     return json.dumps([])
 
 
+@bp.route("/avatar/<name>")
+def loadAvatar(name):
+    return send_from_directory(UPLOAD_AVATAR_FOLDER, name)
+
+
 @bp.route("/loadContacts", methods=["POST"])
 def loadContacts():
     db = get_db()
