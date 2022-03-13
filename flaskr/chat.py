@@ -90,10 +90,30 @@ def loadContacts():
     output = []
 
     for user in contacts:
+
         if user[0] != username:
-            output.append(user[0])
+            avatar = db.execute(
+                "SELECT avatar FROM user WHERE username = ?",
+                (user[0],),
+            ).fetchall()
+
+            res = {
+                "username": user[0],
+                "avatar": url_for("loadAvatar", name=avatar[0]["avatar"]),
+            }
+
+            output.append(res)
         else:
-            output.append(user[1])
+            avatar = db.execute(
+                "SELECT avatar FROM user WHERE username = ?",
+                (user[1],),
+            ).fetchall()
+
+            res = {
+                "username": user[1],
+                "avatar": url_for("loadAvatar", name=avatar[0]["avatar"]),
+            }
+            output.append(res)
 
     return json.dumps(output)
 
