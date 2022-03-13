@@ -5,7 +5,7 @@ from flask.sessions import NullSession
 from werkzeug.exceptions import abort
 from werkzeug.utils import secure_filename
 
-from flaskr.auth import login_required
+# from flaskr.auth import login_required
 from flaskr.db import get_db
 
 from . import auth
@@ -19,6 +19,7 @@ import os
 
 UPLOAD_IMG_FOLDER = "static/chats/img/"
 UPLOAD_VID_FOLDER = "static/chats/vid/"
+UPLOAD_AVATAR_FOLDER = "static/chats/avatar/"
 ALLOWED_IMG_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 ALLOWED_VID_EXTENSIONS = {"mp4", "webm", "oog"}
 
