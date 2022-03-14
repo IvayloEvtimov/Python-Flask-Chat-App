@@ -165,6 +165,39 @@ $(document).ready(function () {
         }
     });
 
+    $("#map-button").on("click", function () {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        }
+
+        function showPosition(position) {
+            $.ajax({
+                url: "/sendLocation",
+                method: "POST",
+                data: { recipient: selected_contact, latitude: position.coords.latitude, longitude: position.coords.longitude },
+                success: function (data) {
+                    var obj = JSON.parse(data);
+                    var string = "";
+
+                    var date = new Date(obj["time"] * 1000);
+                    var map_link = "<iframe src='https://maps.google.com/maps?q=" + obj["latitude"] + "," + obj["longlitute"] + "&hl=bg&z=14&amp;output=embed'></iframe>"
+
+                    if (selected_contact == obj["sender"]) {
+                        // string = string.concat("")
+                        string = string.concat("<li class='clearfix'>\n\t<div class='message-data'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message my-message'>" + map_link + "</div>\n</li>\n")
+                    } else {
+                        string = string.concat("<li class='clearfix'>\n\t<div class='message-data text-right'>\n\t\t<span class='message-data-time'>" + date.toLocaleString() + "</span>\n\t</div>\n\t<div class='message other-message float-right'>" + map_link + "</div>\n</li>\n")
+                    }
+
+                    loaded_messages += 1;
+                    $("#chat-list").append(string);
+                }
+            })
+
+
+        }
+    });
+
 
     $("#img-button").on("click", function () {
         $("#img-file").trigger("click");
