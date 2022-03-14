@@ -212,6 +212,43 @@ def sendMessage():
     return json.dumps(dict)
 
 
+@bp.route("/sendLocation", methods=["POST"])
+def sendLocation():
+    db = get_db()
+
+    receiver = request.form["recipient"]
+    sender = session["username"]
+
+    longlitute = request.form["longitude"]
+    latitude = request.form["latitude"]
+
+    seconds = int(time.time())
+
+    chat_file_path = db.execute(
+        "SELECT chat_file FROM person_chat WHERE (recipient1 = ? AND recipient2 = ?) OR (recipient2 = ? AND recipient1 = ?)",
+        (receiver, sender, receiver, sender),
+    ).fetchone()
+
+    json_url = os.path.join(SITE_ROOT, "static/chats", chat_file_path[0])
+
+    dict = {
+        "sender": sender,
+        "time": seconds,
+        "type": "location",
+        "longlitute": longlitute,
+        "latitude": latitude,
+    }
+
+    with open(json_url, "r+") as file:
+        data = json.load(file)
+        data.append(dict)
+        file.seek(0)
+        json.dump(data, file)
+        file.close()
+
+    return json.dumps(dict)
+
+
 def allowed_img_file(filename):
     return (
         "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_IMG_EXTENSIONS
