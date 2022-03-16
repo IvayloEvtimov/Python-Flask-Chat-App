@@ -1,3 +1,4 @@
+from email.message import Message
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for
 from flask.globals import session
 from flask.helpers import send_from_directory
@@ -190,71 +191,79 @@ def loadChat():
     return json.dumps(data)
 
 
+def saveMessage(sender, receiver, message, type):
+    db = get_db()
+
+    seconds = int(time.time())
+
+    chat_file_path = db.execute(
+        "SELECT chat_file FROM person_chat WHERE (recipient1 = ? AND recipient2 = ?) OR (recipient2 = ? AND recipient1 = ?)",
+        (receiver, sender, receiver, sender),
+    ).fetchone()
+
+    json_url = os.path.join(SITE_ROOT, "static/chats", chat_file_path[0])
+
+    if type == Message_Type.TEXT:
+        dict = {"sender": sender, "time": seconds, "message": message}
+    elif type == Message_Type.LOCATION:
+        dict = {
+            "sender": sender,
+            "time": seconds,
+            "type": "location",
+            "longitude": message["longitude"],
+            "latitude": message["latitude"],
+        }
+    elif type == Message_Type.IMAGE:
+        dict = {
+            "sender": sender,
+            "time": seconds,
+            "type": "img",
+            "url": url_for("loadImage", name=message),
+        }
+    elif type == Message_Type.VIDEO:
+        dict = {
+            "sender": sender,
+            "time": seconds,
+            "type": "vid",
+            "url": url_for("loadVid", name=message),
+        }
+
+    with open(json_url, "r+") as file:
+        data = json.load(file)
+        data.append(dict)
+        file.seek(0)
+        json.dump(data, file)
+        file.close()
+
+    return json.dumps(dict)
+
+
 @bp.route("/sendMessage", methods=["POST"])
 def sendMessage():
-    db = get_db()
 
     receiver = request.form["recipient"]
     sender = session["username"]
 
     message = request.form["message"]
-    seconds = int(time.time())
 
-    chat_file_path = db.execute(
-        "SELECT chat_file FROM person_chat WHERE (recipient1 = ? AND recipient2 = ?) OR (recipient2 = ? AND recipient1 = ?)",
-        (receiver, sender, receiver, sender),
-    ).fetchone()
-
-    # SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-    json_url = os.path.join(SITE_ROOT, "static/chats", chat_file_path[0])
-
-    dict = {"sender": sender, "time": seconds, "message": message}
-
-    with open(json_url, "r+") as file:
-        data = json.load(file)
-        data.append(dict)
-        file.seek(0)
-        json.dump(data, file)
-        file.close()
-
-    return json.dumps(dict)
+    return saveMessage(sender, receiver, message, Message_Type.TEXT)
 
 
 @bp.route("/sendLocation", methods=["POST"])
 def sendLocation():
-    db = get_db()
 
     receiver = request.form["recipient"]
     sender = session["username"]
 
-    longlitute = request.form["longitude"]
+    longitude = request.form["longitude"]
     latitude = request.form["latitude"]
 
-    seconds = int(time.time())
-
-    chat_file_path = db.execute(
-        "SELECT chat_file FROM person_chat WHERE (recipient1 = ? AND recipient2 = ?) OR (recipient2 = ? AND recipient1 = ?)",
-        (receiver, sender, receiver, sender),
-    ).fetchone()
-
-    json_url = os.path.join(SITE_ROOT, "static/chats", chat_file_path[0])
-
-    dict = {
-        "sender": sender,
-        "time": seconds,
-        "type": "location",
-        "longlitute": longlitute,
-        "latitude": latitude,
-    }
-
-    with open(json_url, "r+") as file:
-        data = json.load(file)
-        data.append(dict)
-        file.seek(0)
-        json.dump(data, file)
-        file.close()
-
-    return json.dumps(dict)
+    return saveMessage(
+        sender,
+        receiver,
+        {"longitude": longitude, "latitude": latitude},
+        Message_Type.LOCATION,
+    )
 
 
 def allowed_img_file(filename):
@@ -270,7 +279,6 @@ def loadImage(name):
 
 @bp.route("/sendImage", methods=["POST"])
 def sendImage():
-    db = get_db()
 
     receiver = request.form["recipient"]
     sender = session["username"]
@@ -292,26 +300,7 @@ def sendImage():
     filename = secure_filename(file.filename)
     file.save(os.path.join(SITE_ROOT, UPLOAD_IMG_FOLDER, filename))
 
-    chat_file_path = db.execute(
-        "SELECT chat_file FROM person_chat WHERE (recipient1 = ? AND recipient2 = ?) OR (recipient2 = ? AND recipient1 = ?)",
-        (receiver, sender, receiver, sender),
-    ).fetchone()
-
-    dict = {
-        "sender": sender,
-        "time": int(time.time()),
-        "type": "img",
-        "url": url_for("loadImage", name=filename),
-    }
-
-    with open(os.path.join(SITE_ROOT, "static/chats", chat_file_path[0]), "r+") as file:
-        data = json.load(file)
-        data.append(dict)
-        file.seek(0)
-        json.dump(data, file)
-        file.close()
-
-    return json.dumps(dict)
+    return saveMessage(sender, receiver, filename, Message_Type.IMAGE)
 
 
 def allowed_vid_file(filename):
@@ -327,8 +316,6 @@ def loadVid(name):
 
 @bp.route("/sendVideo", methods=["POST"])
 def sendVideo():
-    db = get_db()
-
     receiver = request.form["recipient"]
     sender = session["username"]
 
@@ -349,23 +336,4 @@ def sendVideo():
     filename = secure_filename(file.filename)
     file.save(os.path.join(SITE_ROOT, UPLOAD_VID_FOLDER, filename))
 
-    chat_file_path = db.execute(
-        "SELECT chat_file FROM person_chat WHERE (recipient1 = ? AND recipient2 = ?) OR (recipient2 = ? AND recipient1 = ?)",
-        (receiver, sender, receiver, sender),
-    ).fetchone()
-
-    dict = {
-        "sender": sender,
-        "time": int(time.time()),
-        "type": "vid",
-        "url": url_for("loadVid", name=filename),
-    }
-
-    with open(os.path.join(SITE_ROOT, "static/chats", chat_file_path[0]), "r+") as file:
-        data = json.load(file)
-        data.append(dict)
-        file.seek(0)
-        json.dump(data, file)
-        file.close()
-
-    return json.dumps(dict)
+    return saveMessage(sender, receiver, filename, Message_Type.VIDEO)
