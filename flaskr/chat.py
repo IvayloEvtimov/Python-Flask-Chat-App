@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 
 # from flaskr.auth import login_required
 from flaskr.db import get_db
+from enum import Enum
 
 from . import auth
 
@@ -24,6 +25,13 @@ ALLOWED_IMG_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 ALLOWED_VID_EXTENSIONS = {"mp4", "webm", "oog"}
 
 SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+
+
+class Message_Type(Enum):
+    TEXT = 1
+    LOCATION = 2
+    IMAGE = 3
+    VIDEO = 4
 
 
 bp = Blueprint("chat", __name__)
