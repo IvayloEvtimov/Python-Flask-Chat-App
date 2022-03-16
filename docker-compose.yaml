@@ -1,0 +1,12 @@
+services:
+  web-app:
+    image: python:3.11.0a6-alpine3.15
+    environment:
+      - FLASK_APP=/web/flaskr/__init__.py
+      - FLASP_ENV=development
+    working_dir: /web
+    ports:
+      - "5000:5000"
+    command: sh -c "pip3 install flask && flask run --host=0.0.0.0"
+    volumes:
+      - /var/www/Python-Flask-Chat-App/:/web/
